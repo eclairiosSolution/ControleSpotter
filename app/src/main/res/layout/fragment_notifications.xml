@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".Fragments.SettingsFragment">
+
+    <Switch
+        android:id="@+id/dark_mode_switch"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_below="@+id/view2"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="20dp"
+        android:hint="Turn on dark mode"
+        android:textColorHint="@color/colorPrimaryDark"
+        android:textSize="16dp" />
+
+    <Switch
+        android:id="@+id/notification_swithc"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_below="@+id/view2"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="10dp"
+        android:textColorHint="@color/colorPrimaryDark"
+        android:layout_marginRight="20dp"
+        android:hint="Notification status"
+        android:textSize="16dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Set radius"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="10dp"
+        android:textColor="@color/colorPrimary"
+        android:layout_marginRight="20dp"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <SeekBar
+            android:id="@+id/seekBar_setting"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="10dp"
+            android:max="4400"
+            android:min="400"
+            android:layout_marginLeft="15dp"
+            android:layout_toLeftOf="@+id/tv_seek_setting" />
+
+        <TextView
+            android:id="@+id/tv_seek_setting"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="10dp"
+            android:layout_centerVertical="true"
+            android:text="400"
+            android:background="@drawable/custom_edittext"
+            android:gravity="center"
+            android:padding="5dp"
+            android:textColor="@color/colorPrimaryDark" />
+
+    </RelativeLayout>
+
+
+
+</LinearLayout>
