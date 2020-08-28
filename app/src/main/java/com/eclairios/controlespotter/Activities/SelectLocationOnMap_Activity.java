@@ -1,34 +1,46 @@
 package com.eclairios.controlespotter.Activities;
 
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.eclairios.controlespotter.Fragments.MyPlaces;
+import com.eclairios.controlespotter.Others.CurrentLocation;
 import com.eclairios.controlespotter.R;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import static com.eclairios.controlespotter.Activities.MainActivity.prefs;
 
 public class SelectLocationOnMap_Activity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
-    private View view;
-    private String passcode;
-    private double lat,lng;
+    private CurrentLocation current_location_class;
+    private double longitude, latitude;
+    private LatLng latLng;
+    private double lat, lng;
+    private FloatingActionButton buttonnavigation, buttonzoommap, buttonzoomoutmap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +52,8 @@ public class SelectLocationOnMap_Activity extends FragmentActivity implements On
         mapFragment.getMapAsync(this);
 
         goback_method();
-
+        getcurrentlocation();
+        flationlisten();
 
     }
 
@@ -57,6 +70,27 @@ public class SelectLocationOnMap_Activity extends FragmentActivity implements On
     @Override
     public void onMapReady(final GoogleMap googleMap) {
         mMap = googleMap;
+
+        mMap.getUiSettings().setMyLocationButtonEnabled(false);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        mMap.setMyLocationEnabled(true);
+
+        float zoomLevel = 15.0f; //This goes up to 21
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoomLevel));
+
+        boolean darkmode_switch = prefs.getBoolean("darkmode_switch", false);
+        if (darkmode_switch) {
+            mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(SelectLocationOnMap_Activity.this, R.raw.style_json));
+        }
 
         // Add a marker in Sydney and move the camera
         googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
@@ -102,5 +136,52 @@ public class SelectLocationOnMap_Activity extends FragmentActivity implements On
             }
         });
 
+    }
+
+    private void getcurrentlocation() {
+
+        current_location_class = new CurrentLocation(SelectLocationOnMap_Activity.this);
+        if (current_location_class.canGetLocation()) {
+
+            longitude = current_location_class.getLongitude();
+            latitude = current_location_class.getLatitude();
+            latLng = new LatLng(latitude, longitude);
+            Log.e("latit", "onCreate: " + longitude);
+        } else {
+
+            current_location_class.showSettingsAlert();
+        }
+    }
+
+    private void flationlisten(){
+
+        buttonnavigation = findViewById(R.id.buttonnavigation);
+        buttonzoommap = findViewById(R.id.buttonzoommap);
+        buttonzoomoutmap = findViewById(R.id.buttonzoomoutmap);
+
+        buttonnavigation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                LatLng latLng = new LatLng(latitude,longitude);
+                CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 15);
+                mMap.animateCamera(cameraUpdate);
+
+            }
+        });
+
+        buttonzoommap.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mMap.animateCamera(CameraUpdateFactory.zoomIn());
+            }
+        });
+
+        buttonzoomoutmap.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mMap.animateCamera(CameraUpdateFactory.zoomOut());
+            }
+        });
     }
 }

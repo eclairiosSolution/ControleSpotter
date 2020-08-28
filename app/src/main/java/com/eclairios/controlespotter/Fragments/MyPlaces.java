@@ -31,6 +31,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.eclairios.controlespotter.Activities.MyPlaceDetail;
 import com.eclairios.controlespotter.Activities.SelectLocationOnMap_Activity;
 import com.eclairios.controlespotter.Adapters.AdapterCategory;
 import com.eclairios.controlespotter.Adapters.PlaceAdapter;
@@ -58,8 +59,6 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
-import static android.content.Context.MODE_PRIVATE;
-
 public class MyPlaces extends Fragment {
 
     private View view;
@@ -69,6 +68,7 @@ public class MyPlaces extends Fragment {
     private ArrayList<ModelForMarker> arrayList = new ArrayList<>();
     private ArrayList<ModelForCategory> dropdownarraylist = new ArrayList<>();
     private PlaceAdapter adapter;
+    private String click_categoryId;
     private double latitudefrommap,longitudefrommap;
 
     @Override
@@ -166,6 +166,7 @@ public class MyPlaces extends Fragment {
                         model.setAddress(jsonObject.getString("address"));
                         model.setName(jsonObject.getString("name"));
                         model.setCategory(jsonObject.getString("categoryid"));
+                        model.setStatus(jsonObject.getString("status"));
 
                         arrayList.add(model);
 
@@ -177,7 +178,6 @@ public class MyPlaces extends Fragment {
                     }
                 }
         } catch (ExecutionException | InterruptedException | JSONException e) {
-            Toast.makeText(getActivity(), "Something went wrong", Toast.LENGTH_SHORT).show();
             Log.e("geterrormessage", "readdata: "+e.getMessage() );
             e.printStackTrace();
         }
@@ -197,12 +197,12 @@ public class MyPlaces extends Fragment {
 
                 final Spinner spinner = rview.findViewById(R.id.spinner);
                 final EditText et_name_place = rview.findViewById(R.id.et_name_place);
-                final EditText et_address_place = rview.findViewById(R.id.et_address_place);
                 final TextView tv_latitude_place = rview.findViewById(R.id.tv_latitude_place);
                 final TextView tv_longitude_place = rview.findViewById(R.id.tv_longitude_place);
                 final SeekBar seekBar = rview.findViewById(R.id.seekBar);
                 final TextView tv_seek = rview.findViewById(R.id.tv_seek);
                 TextView marklocation = rview.findViewById(R.id.marklocation);
+                tv_seek.setText(String.valueOf("400")+" meters");
 
                 AdapterCategory mAdapter = new AdapterCategory(getActivity(), dropdownarraylist);
                 spinner.setAdapter(mAdapter);
@@ -210,8 +210,7 @@ public class MyPlaces extends Fragment {
                     @Override
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                         ModelForCategory clickedItem = (ModelForCategory) parent.getItemAtPosition(position);
-                        String clickedCountryName = clickedItem.getCategoryId();
-                        Toast.makeText(getActivity(), clickedCountryName + " selected", Toast.LENGTH_SHORT).show();
+                         click_categoryId = clickedItem.getCategoryId();
                     }
                     @Override
                     public void onNothingSelected(AdapterView<?> parent) {
@@ -233,59 +232,38 @@ public class MyPlaces extends Fragment {
                 };
                 LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mMessageReceiver, new IntentFilter("message_subject_intent"));
 
-//                if (!Places.isInitialized()) {
-//                    Places.initialize(getActivity(), "AIzaSyBfqWw4Q5NY0qeUiiQN69CpcxY5sJns45k");
+
+                Places.initialize(getActivity(), "AIzaSyBfqWw4Q5NY0qeUiiQN69CpcxY5sJns45k");
+                AutocompleteSupportFragment autocompleteFragment = (AutocompleteSupportFragment)
+                        getChildFragmentManager().findFragmentById(R.id.autocomplete_fragment_addplace);
+                autocompleteFragment.setHint("Address of Event");
+// Specify the types of place data to return.
+                autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG, Place.Field.ADDRESS));
+// Set up a PlaceSelectionListener to handle the response.
+                autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+                    @Override
+                    public void onPlaceSelected(Place place) {
+                        // TODO: Get info about the selected place.
+//                AddressComponents addressComponents=place.getAddressComponents();
+//                for (int i=0;i<addressComponents.asList().size();i++){
+//                    address+=addressComponents.asList().get(i).getName();
 //                }
+                        String address = place.getAddress();
+                        try {
+                            double latitude = place.getLatLng().latitude;
+                            double longitude = place.getLatLng().longitude;
+                        } catch (NullPointerException n) {
+                            n.printStackTrace();
+                        }
+                        Log.i("dkjfhdkfha", "Place: " + place.getName() + " :: " + place.getId() + " :: " + place.getAddress());
+                    }
 
-
-// Initialize the AutocompleteSupportFragment.
-
-//                AutocompleteSupportFragment autocompleteFragment = (AutocompleteSupportFragment)
-//                        getChildFragmentManager().findFragmentById(R.id.autocomplete_fragment);
-//
-//
-//                autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME));
-//
-//
-//                autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
-//                    @Override
-//                    public void onPlaceSelected(Place place) {
-//                        // TODO: Get info about the selected place.
-//                        Log.i("dkfdkfn", "Place: " + place.getName() + ", " + place.getId());
-//                    }
-//
-//                    @Override
-//                    public void onError(Status status) {
-//                        // TODO: Handle the error.
-//                        Log.i("fdklfjdlkjf", "An error occurred: " + status);
-//                    }
-//                });
-
-//                AutocompleteSupportFragment autocompleteFragment = (AutocompleteSupportFragment)
-//                        getChildFragmentManager().findFragmentById(R.id.autocomplete_fragment_add);
-//
-//                // Specify the types of place data to return.
-//                if (autocompleteFragment != null) {
-//                    autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME));
-//                }
-//
-//                // Set up a PlaceSelectionListener to handle the response.
-//                if (autocompleteFragment != null) {
-//                    autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
-//                        @Override
-//                        public void onPlaceSelected(@NotNull Place place) {
-//                            // TODO: Get info about the selected place.
-//                            Log.i("lkdjsjdfn", "Place: " + place.getName() + ", " + place.getId());
-//                        }
-//
-//
-//                        @Override
-//                        public void onError(@NotNull Status status) {
-//                            // TODO: Handle the error.
-//                            Log.i("kldfjdklfj", "An error occurred: " + status);
-//                        }
-//                    });
-//                }
+                    @Override
+                    public void onError(Status status) {
+                        // TODO: Handle the error.
+                        Log.i("dkjfhkjdfh", "An error occurred: " + status);
+                    }
+                });
 
                 Button btn_cancel = rview.findViewById(R.id.btn_cancel);
                 Button btn_yess = rview.findViewById(R.id.btn_yess);
@@ -295,7 +273,8 @@ public class MyPlaces extends Fragment {
                     @Override
                     public void onProgressChanged(SeekBar seekBar, int progress,
                                                   boolean fromUser) {
-                        tv_seek.setText(String.valueOf(progress));
+                        tv_seek.setText(String.valueOf(progress)+" meters");
+
                     }
 
                     @Override
@@ -330,22 +309,22 @@ public class MyPlaces extends Fragment {
                     public void onClick(View v) {
 
                         String stringname = et_name_place.getText().toString();
-                        String stringaddress = et_address_place.getText().toString();
+//                        String stringaddress = et_address_place.getText().toString();
                         String stringlat = tv_latitude_place.getText().toString();
                         String stringlng = tv_longitude_place.getText().toString();
                         String radius = String.valueOf(seekBar.getProgress());
 
                         if (stringname.isEmpty()) {
                             et_name_place.setError("Please enter name");
-                        } else if (stringaddress.isEmpty()) {
-                            et_address_place.setError("Please enter address");
+//                        } else if (stringaddress.isEmpty()) {
+//                            et_address_place.setError("Please enter address");
                         } else if (stringlat.isEmpty()) {
                             tv_latitude_place.setError("Please enter latitude");
                         } else if (stringlng.isEmpty()) {
                             tv_longitude_place.setError("Please enter longitude");
                         } else if (radius.equals("0")) {
                             Toast.makeText(getActivity(), "Radius is 0!", Toast.LENGTH_SHORT).show();
-                        } else if (spinner.getSelectedItem().toString().equals("Select Category")) {
+                        } else if (click_categoryId == null) {
                             Toast.makeText(getActivity(), "Please select category", Toast.LENGTH_SHORT).show();
                         } else {
                             String android_id = Settings.Secure.getString(getContext().getContentResolver(),
@@ -355,19 +334,18 @@ public class MyPlaces extends Fragment {
                             String insert_place = null;
                             try {
                                 insert_place = new Background(getActivity())
-                                        .execute(method, stringname, stringaddress, stringlat, stringlng,
-                                                radius, android_id, spinner.getSelectedItem().toString()).get();
+                                        .execute(method, stringname, "dummyaddress because place api not working", stringlat, stringlng,
+                                                radius, android_id,click_categoryId).get();
 
                                 Log.e("responsedataback", "insert_place: --> " + insert_place);
 
                                 JSONArray jsonArray = new JSONArray(insert_place);
                                 for (int i = 0; i < jsonArray.length(); i++) {
                                     JSONObject jsonObject = jsonArray.getJSONObject(i);
-                                    if (jsonObject.getString("message").contains("New location added")) {
+                                    if (jsonObject.getString("message1").contains("New location added")) {
 
                                         dialog.dismiss();
                                         readdata();
-                                        adapter.notifyDataSetChanged();
                                         Toast.makeText(getActivity(), "Data Inserted Successfully", Toast.LENGTH_SHORT).show();
                                     }
                                 }

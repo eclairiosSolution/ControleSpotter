@@ -23,9 +23,8 @@
         <Spinner
             android:id="@+id/spinner_update"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:background="@android:drawable/btn_dropdown" />
+            android:layout_height="50dp"
+            android:layout_alignParentTop="true" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
@@ -46,20 +45,6 @@
             android:layout_height="wrap_content"
             android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
             />
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <EditText
-                android:id="@+id/et_address_place_update"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:hint="Address"
-                android:inputType="textPostalAddress" />
-
-        </com.google.android.material.textfield.TextInputLayout>
 
         <TextView
             android:id="@+id/marklocation_update"
@@ -115,12 +100,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
+                android:min="400"
+                android:max="4000"
                 android:layout_toLeftOf="@+id/tv_seek_update" />
 
             <TextView
                 android:id="@+id/tv_seek_update"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="80dp"
+                android:layout_height="50dp"
                 android:layout_alignParentRight="true"
                 android:layout_marginRight="10dp"
                 android:background="@drawable/custom_edittext"
@@ -140,8 +127,9 @@
             android:background="@drawable/rounded_corner_green"
             android:gravity="center"
             android:text="Update"
+            android:layout_marginBottom="10dp"
             android:textAllCaps="false"
-            android:textColor="#427802" />
+            android:textColor="#000000" />
 
     </LinearLayout>
 

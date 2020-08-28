@@ -17,6 +17,14 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
+import static com.eclairios.controlespotter.Others.Constants.delete_place;
+import static com.eclairios.controlespotter.Others.Constants.insert_place;
+import static com.eclairios.controlespotter.Others.Constants.nearplaces;
+import static com.eclairios.controlespotter.Others.Constants.read_category;
+import static com.eclairios.controlespotter.Others.Constants.read_category_id;
+import static com.eclairios.controlespotter.Others.Constants.read_place;
+import static com.eclairios.controlespotter.Others.Constants.update_place;
+
 public class Background extends AsyncTask<String, Void, String> {
     String result;
 
@@ -44,17 +52,7 @@ public class Background extends AsyncTask<String, Void, String> {
     @Override
     protected String doInBackground(String... params) {
 
-        String insert_place = "http://192.168.18.11/myplacesapi/insertdata_myplace.php";
 
-        String update_place = "http://192.168.18.11/myplacesapi/update_myplace.php";
-
-        String read_place = "http://192.168.18.11/myplacesapi/readdata_myplace.php";
-
-        String delete_place = "http://192.168.18.11/myplacesapi/delete_myplace.php";
-
-        String read_category = "http://192.168.18.11/myplacesapi/category/readdata_category.php";
-
-        String nearplaces = "http://192.168.18.11/myplacesapi/nearplaces.php";
 
         String method = params[0];
 
@@ -174,6 +172,51 @@ public class Background extends AsyncTask<String, Void, String> {
             return result;
         }
 
+        else if (method.equals("read_category_id")){
+
+            String id = params[1];
+
+            try {
+                URL url = new URL(read_category_id);
+                HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+                httpURLConnection.setRequestMethod("POST");
+                httpURLConnection.setDoOutput(true);
+                httpURLConnection.setDoInput(true);
+                OutputStream outputStream = httpURLConnection.getOutputStream();
+                BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream, StandardCharsets.UTF_8));
+
+                String data = URLEncoder.encode("id", "UTF-8") + "=" + URLEncoder.encode(id, "UTF-8");
+
+                bufferedWriter.write(data);
+                bufferedWriter.flush();
+                bufferedWriter.close();
+                outputStream.close();
+
+                InputStream inputStream = httpURLConnection.getInputStream();
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.ISO_8859_1));
+
+                String response3 = "";
+                String line = "";
+
+                while ((line = bufferedReader.readLine()) != null) {
+                    response3 += line;
+
+                }
+
+                bufferedReader.close();
+                inputStream.close();
+                httpURLConnection.disconnect();
+
+                result = response3;
+                return response3;
+
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return result;
+        }
+
         return null;
 
     }
@@ -206,7 +249,7 @@ public class Background extends AsyncTask<String, Void, String> {
                     + "&" + URLEncoder.encode("radius", "UTF-8") + "=" + URLEncoder.encode(radius, "UTF-8")
                     + "&" + URLEncoder.encode("name", "UTF-8") + "=" + URLEncoder.encode(stringname, "UTF-8")
                     + "&" + URLEncoder.encode("address", "UTF-8") + "=" + URLEncoder.encode(stringaddress, "UTF-8")
-                    + "&" + URLEncoder.encode("categoryid", "UTF-8") + "=" + URLEncoder.encode("1", "UTF-8");
+                    + "&" + URLEncoder.encode("categoryid", "UTF-8") + "=" + URLEncoder.encode(category, "UTF-8");
 
             bufferedWriter.write(data);
             bufferedWriter.flush();
@@ -229,7 +272,9 @@ public class Background extends AsyncTask<String, Void, String> {
             httpURLConnection.disconnect();
 
             result = response3;
+            Log.e("fdaksfhkjashdf", "insert_place_method: "+response3 );
             return response3;
+
 
 
         } catch (IOException e) {
@@ -249,6 +294,7 @@ public class Background extends AsyncTask<String, Void, String> {
         String android_id = params[6];
         String category = params[7];
         String id = params[8];
+        String userstatus = params[9];
 
         try {
             URL url = new URL(create_user);
@@ -266,7 +312,8 @@ public class Background extends AsyncTask<String, Void, String> {
                     + "&" + URLEncoder.encode("radius", "UTF-8") + "=" + URLEncoder.encode(radius, "UTF-8")
                     + "&" + URLEncoder.encode("name", "UTF-8") + "=" + URLEncoder.encode(stringname, "UTF-8")
                     + "&" + URLEncoder.encode("address", "UTF-8") + "=" + URLEncoder.encode(stringaddress, "UTF-8")
-                    + "&" + URLEncoder.encode("categoray", "UTF-8") + "=" + URLEncoder.encode(category, "UTF-8");
+                    + "&" + URLEncoder.encode("categoryid", "UTF-8") + "=" + URLEncoder.encode(category, "UTF-8")
+                    + "&" + URLEncoder.encode("status", "UTF-8") + "=" + URLEncoder.encode(userstatus, "UTF-8");
 
             bufferedWriter.write(data);
             bufferedWriter.flush();
@@ -334,6 +381,7 @@ public class Background extends AsyncTask<String, Void, String> {
             httpURLConnection.disconnect();
 
             result = response4;
+            Log.e("kjfgldfgdaf", "readplace_method: "+result );
             return response4;
 
         } catch (IOException e) {

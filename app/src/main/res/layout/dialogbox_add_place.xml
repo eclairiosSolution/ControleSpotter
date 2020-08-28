@@ -16,9 +16,8 @@
         <Spinner
             android:id="@+id/spinner"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:background="@android:drawable/btn_dropdown" />
+            android:layout_height="50dp"
+            android:layout_alignParentTop="true" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
@@ -34,25 +33,25 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <EditText
-                android:id="@+id/et_address_place"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:hint="Address"
-                android:inputType="textPostalAddress" />
-
-        </com.google.android.material.textfield.TextInputLayout>
-
-<!--        <fragment-->
-<!--            android:id="@+id/autocomplete_fragment_add"-->
-<!--            android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"-->
+<!--        <com.google.android.material.textfield.TextInputLayout-->
 <!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content" />-->
+<!--            android:layout_height="wrap_content">-->
+
+<!--            <EditText-->
+<!--                android:id="@+id/et_address_place"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginTop="10dp"-->
+<!--                android:hint="Address"-->
+<!--                android:inputType="textPostalAddress" />-->
+
+<!--        </com.google.android.material.textfield.TextInputLayout>-->
+
+        <fragment android:id="@+id/autocomplete_fragment_addplace"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
+            />
 
         <TextView
             android:id="@+id/marklocation"
@@ -109,15 +108,15 @@
                 android:id="@+id/seekBar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:max="4400"
+                android:max="4000"
                 android:min="400"
                 android:layout_marginTop="10dp"
                 android:layout_toLeftOf="@+id/tv_seek" />
 
             <TextView
                 android:id="@+id/tv_seek"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="80dp"
+                android:layout_height="50dp"
                 android:layout_alignParentRight="true"
                 android:layout_marginRight="10dp"
                 android:background="@drawable/custom_edittext"

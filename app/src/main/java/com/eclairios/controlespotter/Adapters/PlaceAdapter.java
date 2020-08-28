@@ -9,12 +9,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.eclairios.controlespotter.Activities.MyPlaceDetail;
 import com.eclairios.controlespotter.BackgroundWorks.Background;
 import com.eclairios.controlespotter.ModelClasses.ModelForMarker;
@@ -50,7 +52,39 @@ public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.viewholder> 
 
         holder.title_place.setText(arrayList.get(position).getName());
         holder.address_place.setText(arrayList.get(position).getAddress());
-        holder.radius_place.setText(arrayList.get(position).getRadius()+" Km radius");
+
+        String method_category = "read_category_id";
+        String read_category = null;
+        try {
+            read_category = new Background(context)
+                    .execute(method_category, arrayList.get(position).getCategory()).get();
+
+            Log.e("responsedataback", "read_category_id: --> " + read_category);
+            JSONArray jsonArray_category = new JSONArray(read_category);
+
+            for (int k = 0; k < jsonArray_category.length(); k++) {
+                Log.e("dkfhdskfjas", "onMapReady: " + jsonArray_category.getJSONObject(k).getString("categoryimage"));
+
+                Glide.with(context)
+                        .load("http://192.168.18.11/myplacesapi/category/uploads/"+jsonArray_category.getJSONObject(k).getString("categoryimage"))
+                        .into(holder.iv_place);
+            }
+
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        if (Integer.parseInt(arrayList.get(position).getRadius())<1000){
+            holder.radius_place.setText(arrayList.get(position).getRadius()+" m");
+        }else if (Integer.parseInt(arrayList.get(position).getRadius())>=1000){
+           float dis = Float.parseFloat(arrayList.get(position).getRadius())/1000;
+            holder.radius_place.setText(String.format("%.01f", dis)+" Km");
+        }
+
 
         holder.btn_delete_place.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -73,6 +107,7 @@ public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.viewholder> 
                 intent.putExtra("longitude",arrayList.get(position).getLongitude());
                 intent.putExtra("radius",arrayList.get(position).getRadius());
                 intent.putExtra("category",arrayList.get(position).getCategory());
+                intent.putExtra("status",arrayList.get(position).getStatus());
                 context.startActivity(intent);
             }
         });
@@ -91,6 +126,7 @@ public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.viewholder> 
 
         private TextView title_place,address_place,radius_place;
         private Button btn_delete_place;
+        private ImageView iv_place;
 
         public viewholder(@NonNull View itemView) {
             super(itemView);
@@ -99,6 +135,7 @@ public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.viewholder> 
             address_place = itemView.findViewById(R.id.address_place);
             radius_place = itemView.findViewById(R.id.radius_place);
             btn_delete_place = itemView.findViewById(R.id.btn_delete_place);
+            iv_place = itemView.findViewById(R.id.iv_place);
         }
     }
 
@@ -135,7 +172,6 @@ public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.viewholder> 
                     }
 
                 } catch (ExecutionException | InterruptedException | JSONException e) {
-                    Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show();
                     e.printStackTrace();
                 }
             }

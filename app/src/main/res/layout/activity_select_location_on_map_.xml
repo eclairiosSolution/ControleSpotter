@@ -17,6 +17,41 @@
             android:layout_above="@+id/map_ok_btn"
             tools:context=".Activities.SelectLocationOnMap_Activity" />
 
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_above="@+id/map_ok_btn"
+            android:layout_marginRight="15dp"
+            android:layout_marginBottom="30dp"
+            android:orientation="vertical">
+
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/buttonzoommap"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="#FFF"
+                    android:src="@drawable/plus" />
+
+
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/buttonzoomoutmap"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:backgroundTint="#FFF"
+                    android:src="@drawable/minus" />
+
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/buttonnavigation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="#FFF"
+                    android:src="@drawable/navigation" />
+
+        </LinearLayout>
+
         <Button
             android:id="@+id/map_ok_btn"
             android:layout_width="150dp"
